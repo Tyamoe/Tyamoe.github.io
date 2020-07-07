@@ -7,9 +7,42 @@
     <script src="Build/UnityLoader.js"></script>
     <script>
       UnityLoader.instantiate("unityContainer", "Build/Website.json");
+
+      // setup of the canvas
+
+		var canvas = document.getElementById("unityContainer");
+
+		// pointer lock object forking for cross browser
+
+		canvas.requestPointerLock = canvas.requestPointerLock ||
+		                            canvas.mozRequestPointerLock;
+
+		document.exitPointerLock = document.exitPointerLock ||
+		                           document.mozExitPointerLock;
+
+		canvas.onclick = function() {
+		  canvas.requestPointerLock();
+		};
+
+		// pointer lock event listeners
+
+		// Hook pointer lock state change events for different browsers
+		document.addEventListener('pointerlockchange', lockChangeAlert, false);
+		document.addEventListener('mozpointerlockchange', lockChangeAlert, false);
+
+		function lockChangeAlert() {
+		  if (document.pointerLockElement === canvas ||
+		      document.mozPointerLockElement === canvas) {
+		    console.log('The pointer lock status is now locked');
+		    document.addEventListener("mousemove", updatePosition, false);
+		  } else {
+		    console.log('The pointer lock status is now unlocked');  
+		    document.removeEventListener("mousemove", updatePosition, false);
+		  }
+		}
     </script>
   </head>
   <body>
-    <div id="unityContainer" style="width: 100vw; height: 100vh; margin: auto"></div>
+    <div id="unityContainer" style="position: absolute; width: 100vw; height: 100vh; margin: 0; padding: 0;"></div>
   </body>
 </html>
